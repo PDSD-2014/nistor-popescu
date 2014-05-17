@@ -53,8 +53,10 @@ public class WiFiReceiver extends BroadcastReceiver {
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 Log.d(MainActivity.TAG, "WiFi is enabled");
+                mActivity.setWifiP2pEnabled(true);
             } else {
                 Log.d(MainActivity.TAG, "WiFi is not enabled");
+                mActivity.setWifiP2pEnabled(false);
             }
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers

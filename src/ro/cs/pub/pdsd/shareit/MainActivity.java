@@ -11,14 +11,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity {
 
     public static final String TAG = "shareit";
     private WifiP2pManager mManager;
     private Channel mChannel;
     private WiFiReceiver mReceiver;
     private IntentFilter mIntentFilter;
+    private boolean isWiqfiP2pEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,49 @@ public class MainActivity extends Activity implements OnClickListener {
         if (id == R.id.action_settings) {
             return true;
         }
+
+        switch (id) {
+        case R.id.btn_discover:
+            if (!isWiqfiP2pEnabled) {
+                Toast.makeText(MainActivity.this, R.string.wifi_disabled, Toast.LENGTH_SHORT)
+                        .show();
+                return true;
+            }
+
+            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(MainActivity.this, R.string.wifi_discovery_started,
+                            Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(int reasonCode) {
+                    switch (reasonCode) {
+                    case WifiP2pManager.P2P_UNSUPPORTED:
+                        Toast.makeText(MainActivity.this, R.string.wifi_discovery_unsupported,
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case WifiP2pManager.ERROR:
+                        Toast.makeText(MainActivity.this, R.string.wifi_discovery_error,
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case WifiP2pManager.BUSY:
+                        Toast.makeText(MainActivity.this, R.string.wifi_discovery_busy,
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            });
+            break;
+
+        default:
+            break;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -69,39 +114,8 @@ public class MainActivity extends Activity implements OnClickListener {
         unregisterReceiver(mReceiver);
     }
 
-    @Override
-    public void onClick(View view) {
-        final int id = view.getId();
-
-        switch (id) {
-        case R.id.btn_discover:
-            mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-
-                @Override
-                public void onSuccess() {
-                    Log.d("ShareIt-MainActivity", "discover peers succesful");
-                }
-
-                @Override
-                public void onFailure(int reasonCode) {
-                    switch (reasonCode) {
-                    case WifiP2pManager.P2P_UNSUPPORTED:
-                        Log.d(TAG, "discover peers failure P2P_UNSUPPORTED");
-                        break;
-                    case WifiP2pManager.ERROR:
-                        Log.d(TAG, "discover peers failure ERROR");
-                        break;
-                    case WifiP2pManager.BUSY:
-                        Log.d(TAG, "discover peers failure BUSY");
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            });
-            break;
-        default:
-            break;
-        }
+    public void setWifiP2pEnabled(boolean value) {
+        isWiqfiP2pEnabled = value;
     }
+
 }
