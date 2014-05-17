@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">ShareIt</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="btn_disover">Discover Peers</string>
     <string name="action_settings">Settings</string>
 
 </resources>
