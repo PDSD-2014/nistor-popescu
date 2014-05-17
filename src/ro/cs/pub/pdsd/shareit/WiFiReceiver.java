@@ -39,6 +39,12 @@ public class WiFiReceiver extends BroadcastReceiver {
 
                 if (mPeers.size() == 0) {
                     Log.d(MainActivity.TAG, "onPeersAvailable: No devices found");
+                } else {
+                    List<String> values = new ArrayList<String>();
+                    for (WifiP2pDevice d : mPeers) {
+                        values.add(d.deviceName);
+                    }
+                    mActivity.populateList(values);
                 }
             }
         };

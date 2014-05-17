@@ -1,16 +1,17 @@
 package ro.cs.pub.pdsd.shareit;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -21,6 +22,7 @@ public class MainActivity extends Activity {
     private WiFiReceiver mReceiver;
     private IntentFilter mIntentFilter;
     private boolean isWiqfiP2pEnabled;
+    private ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,8 @@ public class MainActivity extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        list = (ListView) findViewById(R.id.list);
     }
 
     @Override
@@ -118,4 +122,9 @@ public class MainActivity extends Activity {
         isWiqfiP2pEnabled = value;
     }
 
+    public void populateList(List<String> values) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this, R.layout.activity_main, R.id.list_entry, values);
+        list.setAdapter(adapter);
+    }
 }
