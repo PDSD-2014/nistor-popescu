@@ -2,12 +2,15 @@
 <resources>
 
     <string name="app_name">ShareIt</string>
-    <string name="btn_disover">Discover Peers</string>
+    <string name="btn_disover">Start Discovery</string>
+    <string name="name_label">My ID</string>
+    <string name="peers_label">Peers</string>
     <string name="action_settings">Settings</string>
     <string name="wifi_disabled">WiFi is not enabled.</string>
-    <string name="wifi_discovery_started">WiFi discovery started.</string>
+    <string name="wifi_discovery_started">WiFi new discovery started.</string>
+    <string name="wifi_peers_changed">List of peers changed.</string>
     <string name="wifi_discovery_error">WiFi discovery error.</string>
-    <string name="wifi_discovery_unsupported">WIfi discovery is not supported.</string>
+    <string name="wifi_discovery_unsupported">WiFi discovery is not supported.</string>
     <string name="wifi_discovery_busy">WiFi discovery could not be started. Please try again in a few moments.</string>
 
 </resources>

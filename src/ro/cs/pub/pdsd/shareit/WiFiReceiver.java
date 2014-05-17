@@ -12,6 +12,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
+import android.widget.Toast;
 
 public class WiFiReceiver extends BroadcastReceiver {
 
@@ -67,6 +68,8 @@ public class WiFiReceiver extends BroadcastReceiver {
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers
             if (mManager != null) {
+                Toast.makeText(mActivity, R.string.wifi_peers_changed,
+                        Toast.LENGTH_SHORT).show();
                 mManager.requestPeers(mChannel, peerListListener);
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {

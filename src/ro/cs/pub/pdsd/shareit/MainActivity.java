@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -40,6 +41,8 @@ public class MainActivity extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         list = (ListView) findViewById(R.id.list);
+        TextView my_name = (TextView) findViewById(R.id.name);
+        my_name.setText("change_me");
     }
 
     @Override
