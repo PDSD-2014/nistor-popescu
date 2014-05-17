@@ -9,7 +9,9 @@
         android:title="@string/action_settings"/>
 
     <item
-        android:id="@+id/atn_direct_discover"
+        android:id="@+id/btn_discover"
         android:title="@string/btn_disover"
+        android:icon="@drawable/discover"
         android:showAsAction="ifRoom|withText" />
+
 </menu>
