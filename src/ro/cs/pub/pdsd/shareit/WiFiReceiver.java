@@ -3,9 +3,13 @@ package ro.cs.pub.pdsd.shareit;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.android.wifidirect.DeviceDetailFragment;
+import com.example.android.wifidirect.R;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -74,8 +78,29 @@ public class WiFiReceiver extends BroadcastReceiver {
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections
+            if (mManager == null) {
+                return;
+            }
+
+            NetworkInfo networkInfo = (NetworkInfo) intent
+                    .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+
+            if (networkInfo.isConnected()) {
+                // It's a connect
+            } else {
+                // It's a disconnect
+            }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             // Respond to this device's wifi state changing
         }
+    }
+
+    public WifiP2pDevice findPeerByName(String peerName) {
+        for (WifiP2pDevice d : mPeers) {
+            if(d.deviceName.equals(peerName)) {
+                return d;
+            }
+        }
+        return null;
     }
 }

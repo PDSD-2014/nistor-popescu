@@ -7,7 +7,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.os.Bundle;
 import android.view.Menu;
@@ -47,7 +50,23 @@ public class MainActivity extends Activity {
             connectButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO connect
+                    WifiP2pConfig config = new WifiP2pConfig();
+                    config.deviceAddress = mReceiver.findPeerByName(peerName).deviceAddress;
+                    config.wps.setup = WpsInfo.PBC;
+
+                    mManager.connect(mChannel, config, new ActionListener() {
+
+                        @Override
+                        public void onSuccess() {
+                        }
+
+                        @Override
+                        public void onFailure(int reason) {
+                            Toast.makeText(MainActivity.this, "Connect failed. Retry.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     Toast.makeText(MainActivity.this, v.getResources().getString(R.string.action_connect) + " " + peerName,
                             Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
@@ -64,6 +83,7 @@ public class MainActivity extends Activity {
         }
 
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
