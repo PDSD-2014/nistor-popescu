@@ -45,7 +45,7 @@ public class WiFiReceiver extends BroadcastReceiver {
                     for (WifiP2pDevice d : mPeers) {
                         values.add(d.deviceName);
                     }
-                    mActivity.populateList(values);
+                    mActivity.populatePeerList(values);
                 }
             }
         };

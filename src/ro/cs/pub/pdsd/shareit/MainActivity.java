@@ -1,5 +1,6 @@
 package ro.cs.pub.pdsd.shareit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -23,7 +24,7 @@ public class MainActivity extends Activity {
     private WiFiReceiver mReceiver;
     private IntentFilter mIntentFilter;
     private boolean isWiqfiP2pEnabled;
-    private ListView list;
+    private ListView peerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class MainActivity extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        list = (ListView) findViewById(R.id.list);
+        peerList = (ListView) findViewById(R.id.list);
         TextView my_name = (TextView) findViewById(R.id.name);
         my_name.setText("change_me");
     }
@@ -70,6 +71,7 @@ public class MainActivity extends Activity {
                 return true;
             }
 
+            populatePeerList(new ArrayList<String>());
             mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
 
                 @Override
@@ -125,9 +127,9 @@ public class MainActivity extends Activity {
         isWiqfiP2pEnabled = value;
     }
 
-    public void populateList(List<String> values) {
+    public void populatePeerList(List<String> values) {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this, R.layout.activity_main, R.id.list_entry, values);
-        list.setAdapter(adapter);
+        peerList.setAdapter(adapter);
     }
 }
