@@ -3,9 +3,6 @@ package ro.cs.pub.pdsd.shareit;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.android.wifidirect.DeviceDetailFragment;
-import com.example.android.wifidirect.R;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -102,5 +99,16 @@ public class WiFiReceiver extends BroadcastReceiver {
             }
         }
         return null;
+    }
+
+    public boolean isPeerConnected(String peerName) {
+        for (WifiP2pDevice d : mPeers) {
+            if(d.deviceName.equals(peerName)) {
+                if(d.status == WifiP2pDevice.CONNECTED) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

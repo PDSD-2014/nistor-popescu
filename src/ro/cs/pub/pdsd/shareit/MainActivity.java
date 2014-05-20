@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
     private boolean isWiqfiP2pEnabled;
     private ListView peerList;
 
-    private class ConnectListener implements AdapterView.OnItemClickListener{
+    private class ConnectListener implements AdapterView.OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -44,41 +44,49 @@ public class MainActivity extends Activity {
             dialog.setContentView(R.layout.connect_dialog);
             dialog.setTitle(peerName);
 
-            Button connectButton = (Button) dialog.findViewById(R.id.btn_connect);
             Button closeButton = (Button) dialog.findViewById(R.id.btn_cancel);
-
-            connectButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    WifiP2pConfig config = new WifiP2pConfig();
-                    config.deviceAddress = mReceiver.findPeerByName(peerName).deviceAddress;
-                    config.wps.setup = WpsInfo.PBC;
-
-                    mManager.connect(mChannel, config, new ActionListener() {
-
-                        @Override
-                        public void onSuccess() {
-                        }
-
-                        @Override
-                        public void onFailure(int reason) {
-                            Toast.makeText(MainActivity.this, "Connect failed. Retry.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    Toast.makeText(MainActivity.this, v.getResources().getString(R.string.action_connect) + " " + peerName,
-                            Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                }
-            });
-
             closeButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
                 }
             });
+
+            Button connectButton = (Button) dialog.findViewById(R.id.btn_connect);
+
+            if (mReceiver.isPeerConnected(peerName)) {
+                connectButton.setText("Disconnect");
+                dialog.dismiss();
+            } else {
+
+                connectButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        WifiP2pConfig config = new WifiP2pConfig();
+                        config.deviceAddress = mReceiver.findPeerByName(peerName).deviceAddress;
+                        config.wps.setup = WpsInfo.PBC;
+
+                        mManager.connect(mChannel, config, new ActionListener() {
+
+                            @Override
+                            public void onSuccess() {
+                            }
+
+                            @Override
+                            public void onFailure(int reason) {
+                                Toast.makeText(MainActivity.this, "Connect failed. Retry.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        Toast.makeText(
+                                MainActivity.this,
+                                v.getResources().getString(R.string.action_connect) + " "
+                                        + peerName, Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                });
+            }
             dialog.show();
         }
 
@@ -188,8 +196,8 @@ public class MainActivity extends Activity {
     }
 
     public void populatePeerList(List<String> values) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, R.layout.peer_layout, R.id.list_entry, values);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.peer_layout,
+                R.id.list_entry, values);
         peerList.setAdapter(adapter);
     }
 }
