@@ -129,7 +129,7 @@ public class MainActivity extends Activity {
 
     public void populatePeerList(List<String> values) {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this, R.layout.activity_main, R.id.list_entry, values);
+                this, R.layout.peer_layout, R.id.list_entry, values);
         peerList.setAdapter(adapter);
     }
 }
