@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -11,7 +12,11 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +31,39 @@ public class MainActivity extends Activity {
     private boolean isWiqfiP2pEnabled;
     private ListView peerList;
 
+    private class ConnectListener implements AdapterView.OnItemClickListener{
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            final String peerName = (String) peerList.getItemAtPosition(position);
+
+            final Dialog dialog = new Dialog(view.getContext());
+            dialog.setContentView(R.layout.connect_dialog);
+            dialog.setTitle(peerName);
+
+            Button connectButton = (Button) dialog.findViewById(R.id.btn_connect);
+            Button closeButton = (Button) dialog.findViewById(R.id.btn_cancel);
+
+            connectButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO connect
+                    Toast.makeText(MainActivity.this, v.getResources().getString(R.string.action_connect) + " " + peerName,
+                            Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            });
+
+            closeButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +80,8 @@ public class MainActivity extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         peerList = (ListView) findViewById(R.id.list);
+        peerList.setOnItemClickListener(new ConnectListener());
+
         TextView my_name = (TextView) findViewById(R.id.name);
         my_name.setText("change_me");
     }

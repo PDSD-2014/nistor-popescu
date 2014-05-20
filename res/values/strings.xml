@@ -12,5 +12,8 @@
     <string name="wifi_discovery_error">WiFi discovery error.</string>
     <string name="wifi_discovery_unsupported">WiFi discovery is not supported.</string>
     <string name="wifi_discovery_busy">WiFi discovery could not be started. Please try again in a few moments.</string>
+    <string name="action_connect">Connecting to</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="connect_label">Connect</string>
 
 </resources>
