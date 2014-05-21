@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -35,6 +36,7 @@ public class MainActivity extends Activity {
     private WiFiReceiver mReceiver;
     private IntentFilter mIntentFilter;
     private boolean isWiqfiP2pEnabled;
+    private WifiP2pInfo mInfo;
     private ListView peerList;
 
     private class ConnectListener implements AdapterView.OnItemClickListener {
@@ -49,7 +51,7 @@ public class MainActivity extends Activity {
             if (mReceiver.isPeerConnected(peerName)) {
                 dialog.setContentView(R.layout.after_connect_dialog);
                 Button disconnectBtn = (Button) dialog.findViewById(R.id.btn_disconnect);
-                //TODO disconnect
+                // TODO disconnect
 
                 Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_launch_gallery);
                 launchGalleryBtn.setOnClickListener(new OnClickListener() {
@@ -108,8 +110,21 @@ public class MainActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {
+            Log.v(TAG, "No image selected");
+            return;
+        }
         Uri uri = data.getData();
         Log.i(MainActivity.TAG, uri.toString());
+
+        Toast.makeText(MainActivity.this, "Sending " + uri, Toast.LENGTH_SHORT).show();
+        Intent serviceIntent = new Intent(this, FileTransferService.class);
+        serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);
+        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, uri.toString());
+        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                mInfo.groupOwnerAddress.getHostAddress());
+        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
+        startService(serviceIntent);
     }
 
     @Override
@@ -216,5 +231,9 @@ public class MainActivity extends Activity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.peer_layout,
                 R.id.list_entry, values);
         peerList.setAdapter(adapter);
+    }
+
+    public void setInfo(WifiP2pInfo info) {
+        this.mInfo = info;
     }
 }

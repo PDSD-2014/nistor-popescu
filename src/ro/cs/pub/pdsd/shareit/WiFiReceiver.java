@@ -83,7 +83,7 @@ public class WiFiReceiver extends BroadcastReceiver {
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
             if (networkInfo.isConnected()) {
-                // It's a connect
+                mManager.requestConnectionInfo(mChannel, new ConnectionListener(mActivity));
             } else {
                 // It's a disconnect
             }
