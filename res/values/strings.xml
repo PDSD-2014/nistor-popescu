@@ -15,5 +15,7 @@
     <string name="action_connect">Connecting to</string>
     <string name="cancel_label">Cancel</string>
     <string name="connect_label">Connect</string>
+    <string name="diconnect_label">Disconnect</string>
+    <string name="launch_gallery">Launch Gallery</string>
 
 </resources>

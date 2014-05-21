@@ -6,13 +6,16 @@ import java.util.List;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,11 +24,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+    public static final int LAUNCH_GALLERY_RESULT_CODE = 20;
     public static final String TAG = "shareit";
     private WifiP2pManager mManager;
     private Channel mChannel;
@@ -41,25 +44,28 @@ public class MainActivity extends Activity {
             final String peerName = (String) peerList.getItemAtPosition(position);
 
             final Dialog dialog = new Dialog(view.getContext());
-            dialog.setContentView(R.layout.connect_dialog);
             dialog.setTitle(peerName);
 
-            Button closeButton = (Button) dialog.findViewById(R.id.btn_cancel);
-            closeButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-
-            Button connectButton = (Button) dialog.findViewById(R.id.btn_connect);
-
             if (mReceiver.isPeerConnected(peerName)) {
-                connectButton.setText("Disconnect");
-                dialog.dismiss();
-            } else {
+                dialog.setContentView(R.layout.after_connect_dialog);
+                Button disconnectBtn = (Button) dialog.findViewById(R.id.btn_disconnect);
+                //TODO disconnect
 
-                connectButton.setOnClickListener(new OnClickListener() {
+                Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_launch_gallery);
+                launchGalleryBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        intent.setType("image/*");
+                        startActivityForResult(intent, LAUNCH_GALLERY_RESULT_CODE);
+                        dialog.dismiss();
+                    }
+                });
+            } else {
+                dialog.setContentView(R.layout.before_connect_dialog);
+                Button connectBtn = (Button) dialog.findViewById(R.id.btn_connect);
+
+                connectBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         WifiP2pConfig config = new WifiP2pConfig();
@@ -87,9 +93,23 @@ public class MainActivity extends Activity {
                     }
                 });
             }
+
+            Button closeButton = (Button) dialog.findViewById(R.id.btn_cancel);
+            closeButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
             dialog.show();
         }
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Uri uri = data.getData();
+        Log.i(MainActivity.TAG, uri.toString());
     }
 
     @Override
@@ -130,8 +150,8 @@ public class MainActivity extends Activity {
 
         switch (id) {
         case R.id.btn_discover:
+            populatePeerList(new ArrayList<String>());
             if (!isWiqfiP2pEnabled) {
-                populatePeerList(new ArrayList<String>());
                 Toast.makeText(MainActivity.this, R.string.wifi_disabled, Toast.LENGTH_SHORT)
                         .show();
                 return true;
