@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +37,7 @@ public class FileTransferService extends IntentService {
 
         Context context = getApplicationContext();
         if (intent.getAction().equals(ACTION_SEND_FILE)) {
-            String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
+            String fileName = intent.getExtras().getString(EXTRAS_FILE_PATH);
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
             Socket socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
@@ -47,13 +49,14 @@ public class FileTransferService extends IntentService {
 
                 Log.d(MainActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream stream = socket.getOutputStream();
-                ContentResolver cr = context.getContentResolver();
                 InputStream is = null;
                 try {
-                    is = cr.openInputStream(Uri.parse(fileUri));
+                    is = new FileInputStream(fileName);
                 } catch (FileNotFoundException e) {
                     Log.d(MainActivity.TAG, e.toString());
                 }
+                Toast.makeText(context, "Sending " + fileName.substring(fileName.lastIndexOf('/')),
+                        Toast.LENGTH_SHORT).show();
                 FileServerAsyncTask.copyFile(is, stream);
                 Log.d(MainActivity.TAG, "Client: Data written");
             } catch (IOException e) {

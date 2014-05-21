@@ -19,7 +19,7 @@ public class ConnectionListener implements ConnectionInfoListener {
         if (info.groupFormed && info.isGroupOwner) {
             new FileServerAsyncTask(mActivity).execute();
         } else {
-            mActivity.findViewById(R.id.btn_launch_gallery).setVisibility(View.VISIBLE);
+//            mActivity.findViewById(R.id.btn_launch_gallery).setVisibility(View.VISIBLE);
         }
         
     }

@@ -14,8 +14,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
 
@@ -35,6 +33,7 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
             final File f = new File(Environment.getExternalStorageDirectory() + "/"
                     + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
                     + ".jpg");
+            Log.i(MainActivity.TAG, f.getAbsolutePath());
 
             File dirs = new File(f.getParent());
             if (!dirs.exists())

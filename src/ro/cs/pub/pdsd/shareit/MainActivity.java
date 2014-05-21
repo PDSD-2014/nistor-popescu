@@ -1,5 +1,6 @@
 package ro.cs.pub.pdsd.shareit;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +40,7 @@ public class MainActivity extends Activity {
     private boolean isWiqfiP2pEnabled;
     private WifiP2pInfo mInfo;
     private ListView peerList;
+    private FileDialog fileDialog;
 
     private class ConnectListener implements AdapterView.OnItemClickListener {
 
@@ -57,9 +60,7 @@ public class MainActivity extends Activity {
                 launchGalleryBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType("image/*");
-                        startActivityForResult(intent, LAUNCH_GALLERY_RESULT_CODE);
+                        fileDialog.showDialog();
                         dialog.dismiss();
                     }
                 });
@@ -117,14 +118,6 @@ public class MainActivity extends Activity {
         Uri uri = data.getData();
         Log.i(MainActivity.TAG, uri.toString());
 
-        Toast.makeText(MainActivity.this, "Sending " + uri, Toast.LENGTH_SHORT).show();
-        Intent serviceIntent = new Intent(this, FileTransferService.class);
-        serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);
-        serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, uri.toString());
-        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                mInfo.groupOwnerAddress.getHostAddress());
-        serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
-        startService(serviceIntent);
     }
 
     @Override
@@ -144,6 +137,22 @@ public class MainActivity extends Activity {
 
         peerList = (ListView) findViewById(R.id.list);
         peerList.setOnItemClickListener(new ConnectListener());
+
+        File mPath = new File(Environment.getExternalStorageDirectory() + "");
+        fileDialog = new FileDialog(this, mPath);
+        fileDialog.addFileListener(new FileDialog.FileSelectedListener() {
+            public void fileSelected(File file) {
+                Log.d(getClass().getName(), "selected file " + file.toString());
+                Intent serviceIntent = new Intent(MainActivity.this, FileTransferService.class);
+                serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);
+                serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, file.toString());
+                serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                        mInfo.groupOwnerAddress.getHostAddress());
+                serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
+                startService(serviceIntent);
+            }
+        });
+
     }
 
     @Override
