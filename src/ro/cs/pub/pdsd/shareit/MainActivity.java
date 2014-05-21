@@ -54,7 +54,24 @@ public class MainActivity extends Activity {
             if (mReceiver.isPeerConnected(peerName)) {
                 dialog.setContentView(R.layout.after_connect_dialog);
                 Button disconnectBtn = (Button) dialog.findViewById(R.id.btn_disconnect);
-                // TODO disconnect
+                disconnectBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mManager.removeGroup(mChannel, new ActionListener() {
+
+                            @Override
+                            public void onFailure(int reasonCode) {
+                                Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
+                            }
+
+                            @Override
+                            public void onSuccess() {
+                                dialog.dismiss();
+                            }
+
+                        });
+                    }
+                });
 
                 Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_launch_gallery);
                 launchGalleryBtn.setOnClickListener(new OnClickListener() {

@@ -1,10 +1,8 @@
 package ro.cs.pub.pdsd.shareit;
 
 import android.app.IntentService;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
