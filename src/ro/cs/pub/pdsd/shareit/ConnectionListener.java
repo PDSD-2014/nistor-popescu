@@ -15,7 +15,7 @@ public class ConnectionListener implements ConnectionInfoListener {
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
         mActivity.setInfo(info);
         
-        if (info.groupFormed && info.isGroupOwner) {
+        if (info.groupFormed && mActivity.isDownloader()) {
             new FileServerAsyncTask(mActivity).execute();
         } else {
 //            mActivity.findViewById(R.id.btn_launch_gallery).setVisibility(View.VISIBLE);
