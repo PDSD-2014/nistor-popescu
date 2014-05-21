@@ -32,6 +32,9 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     public static final int LAUNCH_GALLERY_RESULT_CODE = 20;
+    public static final int NO_CONNECTION = 1;
+    public static final int DOWNLOAD_CONNECTION = 2;
+    public static final int UPLOAD_CONNECTION = 3;
     public static final String TAG = "shareit";
     private WifiP2pManager mManager;
     private Channel mChannel;
@@ -41,6 +44,7 @@ public class MainActivity extends Activity {
     private WifiP2pInfo mInfo;
     private ListView peerList;
     private FileDialog fileDialog;
+    private int connectionState;
 
     private class ConnectListener implements AdapterView.OnItemClickListener {
 
@@ -54,8 +58,16 @@ public class MainActivity extends Activity {
             if (mReceiver.isPeerConnected(peerName)) {
                 dialog.setContentView(R.layout.after_connect_dialog);
                 Button disconnectBtn = (Button) dialog.findViewById(R.id.btn_disconnect);
-                // TODO disconnect
+                disconnectBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MainActivity.this.connectionState = NO_CONNECTION;
+                        // TODO disconnect
+                        dialog.dismiss();
+                    }
+                });
 
+                // TODO isDownloader => do not show this button
                 Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_launch_gallery);
                 launchGalleryBtn.setOnClickListener(new OnClickListener() {
                     @Override
@@ -71,6 +83,7 @@ public class MainActivity extends Activity {
                 connectBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        //
                         WifiP2pConfig config = new WifiP2pConfig();
                         config.deviceAddress = mReceiver.findPeerByName(peerName).deviceAddress;
                         config.wps.setup = WpsInfo.PBC;
@@ -79,6 +92,7 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void onSuccess() {
+                                MainActivity.this.connectionState = UPLOAD_CONNECTION;
                             }
 
                             @Override
@@ -152,6 +166,7 @@ public class MainActivity extends Activity {
                 startService(serviceIntent);
             }
         });
+        connectionState = NO_CONNECTION;
 
     }
 
@@ -244,5 +259,9 @@ public class MainActivity extends Activity {
 
     public void setInfo(WifiP2pInfo info) {
         this.mInfo = info;
+    }
+
+    public boolean isDownloader() {
+        return this.connectionState == DOWNLOAD_CONNECTION;
     }
 }
