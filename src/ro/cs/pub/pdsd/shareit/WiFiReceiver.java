@@ -13,6 +13,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class WiFiReceiver extends BroadcastReceiver {
@@ -69,8 +70,7 @@ public class WiFiReceiver extends BroadcastReceiver {
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers
             if (mManager != null) {
-                Toast.makeText(mActivity, R.string.wifi_peers_changed,
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity, R.string.wifi_peers_changed, Toast.LENGTH_SHORT).show();
                 mManager.requestPeers(mChannel, peerListListener);
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
@@ -89,12 +89,15 @@ public class WiFiReceiver extends BroadcastReceiver {
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             // Respond to this device's wifi state changing
+            TextView myDeviceName = (TextView) mActivity.findViewById(R.id.name);
+            myDeviceName.setText(((WifiP2pDevice) intent
+                    .getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE)).deviceName);
         }
     }
 
     public WifiP2pDevice findPeerByName(String peerName) {
         for (WifiP2pDevice d : mPeers) {
-            if(d.deviceName.equals(peerName)) {
+            if (d.deviceName.equals(peerName)) {
                 return d;
             }
         }
@@ -103,8 +106,8 @@ public class WiFiReceiver extends BroadcastReceiver {
 
     public boolean isPeerConnected(String peerName) {
         for (WifiP2pDevice d : mPeers) {
-            if(d.deviceName.equals(peerName)) {
-                if(d.status == WifiP2pDevice.CONNECTED) {
+            if (d.deviceName.equals(peerName)) {
+                if (d.status == WifiP2pDevice.CONNECTED) {
                     return true;
                 }
             }

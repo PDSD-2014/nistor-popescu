@@ -109,9 +109,6 @@ public class MainActivity extends Activity {
 
         peerList = (ListView) findViewById(R.id.list);
         peerList.setOnItemClickListener(new ConnectListener());
-
-        TextView my_name = (TextView) findViewById(R.id.name);
-        my_name.setText("change_me");
     }
 
     @Override
