@@ -131,12 +131,12 @@ public class MainActivity extends Activity {
         switch (id) {
         case R.id.btn_discover:
             if (!isWiqfiP2pEnabled) {
+                populatePeerList(new ArrayList<String>());
                 Toast.makeText(MainActivity.this, R.string.wifi_disabled, Toast.LENGTH_SHORT)
                         .show();
                 return true;
             }
 
-            populatePeerList(new ArrayList<String>());
             mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
 
                 @Override
