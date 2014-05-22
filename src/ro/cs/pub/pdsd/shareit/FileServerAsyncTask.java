@@ -1,26 +1,22 @@
 package ro.cs.pub.pdsd.shareit;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
 
-    private Context context;
+    private MainActivity mActivity;
 
-    public FileServerAsyncTask(Context context) {
-        this.context = context;
+    public FileServerAsyncTask(MainActivity activity) {
+        this.mActivity = activity;
     }
 
     @Override
@@ -29,25 +25,18 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
             ServerSocket serverSocket = new ServerSocket(8988);
             Log.d(MainActivity.TAG, "Server: Socket opened");
             Socket client = serverSocket.accept();
+            if (mActivity.isUploader()) {
+                mActivity.setUploadSocket(client);
+            } else {
+                // TODO: instead of saving socket, start downloader / receiver
+                new Downloader(client).start();
+            }
             Log.d(MainActivity.TAG, "Server: connection done");
-            final File f = new File(Environment.getExternalStorageDirectory() + "/"
-                    + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
-                    + ".jpg");
-            Log.i(MainActivity.TAG, f.getAbsolutePath());
-
-            File dirs = new File(f.getParent());
-            if (!dirs.exists())
-                dirs.mkdirs();
-            f.createNewFile();
-
-            InputStream inputstream = client.getInputStream();
-            copyFile(inputstream, new FileOutputStream(f));
-            serverSocket.close();
-            return f.getAbsolutePath();
         } catch (IOException e) {
             Log.e(MainActivity.TAG, e.getMessage());
             return null;
         }
+        return null;
     }
 
     @Override
@@ -57,7 +46,7 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
             Intent intent = new Intent();
             intent.setAction(android.content.Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.parse("file://" + result), "image/*");
-            context.startActivity(intent);
+            mActivity.startActivity(intent);
         }
 
     }
@@ -74,8 +63,8 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
             while ((len = inputStream.read(buf)) != -1) {
                 out.write(buf, 0, len);
             }
-            out.close();
-            inputStream.close();
+            // out.close();
+            // inputStream.close();
         } catch (IOException e) {
             Log.d(MainActivity.TAG, e.toString());
             return false;

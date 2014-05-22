@@ -1,18 +1,16 @@
 package ro.cs.pub.pdsd.shareit;
 
 import java.io.File;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -41,10 +39,10 @@ public class MainActivity extends Activity {
     private WiFiReceiver mReceiver;
     private IntentFilter mIntentFilter;
     private boolean isWiqfiP2pEnabled;
-    private WifiP2pInfo mInfo;
     private ListView peerList;
     private FileDialog fileDialog;
     private int connectionState;
+    private Socket uploadSocket;
 
     private class ConnectListener implements AdapterView.OnItemClickListener {
 
@@ -136,17 +134,6 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null) {
-            Log.v(TAG, "No image selected");
-            return;
-        }
-        Uri uri = data.getData();
-        Log.i(MainActivity.TAG, uri.toString());
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -168,14 +155,8 @@ public class MainActivity extends Activity {
         fileDialog = new FileDialog(this, mPath);
         fileDialog.addFileListener(new FileDialog.FileSelectedListener() {
             public void fileSelected(File file) {
-                Log.d(getClass().getName(), "selected file " + file.toString());
-                Intent serviceIntent = new Intent(MainActivity.this, FileTransferService.class);
-                serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);
-                serviceIntent.putExtra(FileTransferService.EXTRAS_FILE_PATH, file.toString());
-                serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                        mInfo.groupOwnerAddress.getHostAddress());
-                serviceIntent.putExtra(FileTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
-                startService(serviceIntent);
+                // start sender / uploader now with the selected file
+                new Uploader(MainActivity.this.uploadSocket, file).start();
             }
         });
         connectionState = NO_CONNECTION;
@@ -269,15 +250,16 @@ public class MainActivity extends Activity {
         peerList.setAdapter(adapter);
     }
 
-    public void setInfo(WifiP2pInfo info) {
-        this.mInfo = info;
-    }
-
-    public boolean isDownloader() {
-        return this.connectionState == DOWNLOAD_CONNECTION;
+    public boolean isUploader() {
+        return this.connectionState == UPLOAD_CONNECTION;
     }
 
     private void clearPeerList() {
         populatePeerList(new ArrayList<String>());
+    }
+
+    public void setUploadSocket(Socket socket) {
+        this.uploadSocket = socket;
+
     }
 }
