@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import android.util.Log;
+
 public class Uploader extends Thread {
 
     private Socket socket;
@@ -28,8 +30,7 @@ public class Uploader extends Thread {
             FileServerAsyncTask.copyFile(new FileInputStream(file), dos);
             dos.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.w(MainActivity.TAG, e.getMessage());
         }
     }
 

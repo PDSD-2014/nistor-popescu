@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-    public static final int LAUNCH_GALLERY_RESULT_CODE = 20;
     public static final int NO_CONNECTION = 1;
     public static final int DOWNLOAD_CONNECTION = 2;
     public static final int UPLOAD_CONNECTION = 3;
@@ -39,7 +38,7 @@ public class MainActivity extends Activity {
     private Channel mChannel;
     private WiFiReceiver mReceiver;
     private IntentFilter mIntentFilter;
-    private boolean isWiqfiP2pEnabled;
+    private boolean isWifiP2pEnabled;
     private ListView peerList;
     private FileDialog fileDialog;
     private static int connectionState;
@@ -72,7 +71,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void onSuccess() {
                                 clearPeerList();
-                                closeSocket();
+                                closeConnection();
                                 dialog.dismiss();
                             }
                         });
@@ -81,7 +80,7 @@ public class MainActivity extends Activity {
 
                 // isDownloader => do not show launch gallery button
                 if (connectionState == UPLOAD_CONNECTION) {
-                    Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_launch_gallery);
+                    Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_choose_file);
                     launchGalleryBtn.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -90,7 +89,7 @@ public class MainActivity extends Activity {
                         }
                     });
                 } else {
-                    dialog.findViewById(R.id.btn_launch_gallery).setVisibility(View.GONE);
+                    dialog.findViewById(R.id.btn_choose_file).setVisibility(View.GONE);
                 }
             } else {
                 dialog.setContentView(R.layout.before_connect_dialog);
@@ -189,7 +188,7 @@ public class MainActivity extends Activity {
         switch (id) {
         case R.id.btn_discover:
             clearPeerList();
-            if (!isWiqfiP2pEnabled) {
+            if (!isWifiP2pEnabled) {
                 Toast.makeText(MainActivity.this, R.string.wifi_disabled, Toast.LENGTH_SHORT)
                         .show();
                 return true;
@@ -247,7 +246,7 @@ public class MainActivity extends Activity {
     }
 
     public void setWifiP2pEnabled(boolean value) {
-        isWiqfiP2pEnabled = value;
+        isWifiP2pEnabled = value;
     }
 
     public void populatePeerList(List<String> values) {
@@ -268,12 +267,13 @@ public class MainActivity extends Activity {
         MainActivity.socket = socket;
     }
 
-    public void closeSocket(){
+    public void closeConnection(){
+        connectionState = NO_CONNECTION;
         try {
             if (MainActivity.socket != null)
                 MainActivity.socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.w(TAG, e.getMessage());
         }
     }
 }

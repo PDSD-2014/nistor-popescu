@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -28,7 +26,7 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
             MainActivity.setSocket(client);
 
             if (!MainActivity.isUploader()) {
-                // TODO: instead of saving socket, start downloader / receiver
+                // instead of saving socket, start downloader / receiver
                 new Downloader(client).start();
             }
 
@@ -42,19 +40,10 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        if (result != null) {
-            // TODO: notify file finished copying
-            Intent intent = new Intent();
-            intent.setAction(android.content.Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.parse("file://" + result), "image/*");
-            mActivity.startActivity(intent);
-        }
-
     }
 
     @Override
     protected void onPreExecute() {
-        // TODO: notify opening socket
     }
 
     public static boolean copyFile(InputStream inputStream, OutputStream out) {
@@ -68,7 +57,7 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
             // out.close();
             // inputStream.close();
         } catch (IOException e) {
-            Log.d(MainActivity.TAG, e.toString());
+            Log.w(MainActivity.TAG, e.toString());
             return false;
         }
         return true;

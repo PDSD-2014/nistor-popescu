@@ -45,7 +45,7 @@ public class FileTransferService extends IntentService {
 
                 Log.d(MainActivity.TAG, "Client socket - " + socket.isConnected());
             } catch (IOException e) {
-                Log.e(MainActivity.TAG, e.getMessage());
+                Log.w(MainActivity.TAG, e.getMessage());
             }
         }
     }

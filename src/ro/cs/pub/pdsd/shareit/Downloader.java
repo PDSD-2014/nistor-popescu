@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import android.os.Environment;
+import android.util.Log;
 
 public class Downloader extends Thread {
 
@@ -40,8 +41,7 @@ public class Downloader extends Thread {
             FileServerAsyncTask.copyFile(is, os);
             os.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.w(MainActivity.TAG, e.getMessage());
         }
     }
 
