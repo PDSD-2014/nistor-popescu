@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Uploader extends Thread {
@@ -21,14 +22,9 @@ public class Uploader extends Thread {
     public void run() {
         // send filename and file
         try {
-            byte[] buf = new byte[128];
-            for (int i = 0; i < file.getName().getBytes().length; i++) {
-                buf[i] = file.getName().getBytes()[i];
-            }
             OutputStream dos = new DataOutputStream(socket.getOutputStream());
-
-            dos.write(buf, 0, 128);
-
+            PrintWriter pw = new PrintWriter(dos, true);
+            pw.println(file.getName());
             FileServerAsyncTask.copyFile(new FileInputStream(file), dos);
             dos.close();
         } catch (IOException e) {
