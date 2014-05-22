@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import android.os.Environment;
+import android.util.Log;
 
 public class Downloader extends Thread {
 
@@ -31,11 +32,17 @@ public class Downloader extends Thread {
             }
             String name = new String(realData);
 
-            OutputStream os = new FileOutputStream(new File(
-                    Environment.getExternalStorageDirectory() + "/Download" + name));
+            File f = new File(Environment.getExternalStorageDirectory() + "/Download/" + name);
+            File dirs = new File(f.getParent());
+            if (!dirs.exists()) {
+                dirs.mkdirs();
+            }
+            f.createNewFile();
+
+            OutputStream os = new FileOutputStream(f);
 
             FileServerAsyncTask.copyFile(is, os);
-
+            os.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

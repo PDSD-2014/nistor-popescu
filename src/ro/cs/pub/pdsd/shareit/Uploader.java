@@ -21,12 +21,16 @@ public class Uploader extends Thread {
     public void run() {
         // send filename and file
         try {
+            byte[] buf = new byte[128];
+            for (int i = 0; i < file.getName().getBytes().length; i++) {
+                buf[i] = file.getName().getBytes()[i];
+            }
             OutputStream dos = new DataOutputStream(socket.getOutputStream());
 
-            dos.write(file.getName().getBytes());
+            dos.write(buf, 0, 128);
 
             FileServerAsyncTask.copyFile(new FileInputStream(file), dos);
-
+            dos.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
