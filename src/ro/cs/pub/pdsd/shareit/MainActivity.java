@@ -84,15 +84,20 @@ public class MainActivity extends Activity {
                     }
                 });
 
-                // TODO isDownloader => do not show this button
-                Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_launch_gallery);
-                launchGalleryBtn.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        fileDialog.showDialog();
-                        dialog.dismiss();
-                    }
-                });
+                // isDownloader => do not show launch gallery button
+                Log.i(MainActivity.TAG, "conn state " + connectionState);
+                if (connectionState == UPLOAD_CONNECTION) {
+                    Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_launch_gallery);
+                    launchGalleryBtn.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            fileDialog.showDialog();
+                            dialog.dismiss();
+                        }
+                    });
+                } else {
+                    dialog.findViewById(R.id.btn_launch_gallery).setVisibility(View.GONE);
+                }
             } else {
                 dialog.setContentView(R.layout.before_connect_dialog);
                 Button connectBtn = (Button) dialog.findViewById(R.id.btn_connect);
