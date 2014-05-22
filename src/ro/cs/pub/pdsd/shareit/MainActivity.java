@@ -261,7 +261,7 @@ public class MainActivity extends Activity {
         return connectionState == UPLOAD_CONNECTION;
     }
 
-    private void clearPeerList() {
+    public void clearPeerList() {
         populatePeerList(new ArrayList<String>());
     }
 

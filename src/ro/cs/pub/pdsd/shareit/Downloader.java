@@ -1,14 +1,15 @@
 package ro.cs.pub.pdsd.shareit;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
 import android.os.Environment;
-import android.util.Log;
 
 public class Downloader extends Thread {
 
@@ -24,13 +25,8 @@ public class Downloader extends Thread {
         InputStream is = null;
         try {
             is = socket.getInputStream();
-            byte[] data = new byte[128];
-            int ret = is.read(data, 0, 128);
-            byte[] realData = new byte[ret];
-            for (int i = 0; i < ret; i++) {
-                realData[i] = data[i];
-            }
-            String name = new String(realData);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String name = br.readLine().trim();
 
             File f = new File(Environment.getExternalStorageDirectory() + "/Download/" + name);
             File dirs = new File(f.getParent());
