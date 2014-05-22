@@ -1,6 +1,7 @@
 package ro.cs.pub.pdsd.shareit;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +42,8 @@ public class MainActivity extends Activity {
     private boolean isWiqfiP2pEnabled;
     private ListView peerList;
     private FileDialog fileDialog;
-    private int connectionState;
-    private Socket uploadSocket;
+    private static int connectionState;
+    private static Socket socket;
 
     private class ConnectListener implements AdapterView.OnItemClickListener {
 
@@ -60,7 +61,7 @@ public class MainActivity extends Activity {
                 disconnectBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MainActivity.this.connectionState = NO_CONNECTION;
+                        MainActivity.connectionState = NO_CONNECTION;
                         mManager.removeGroup(mChannel, new ActionListener() {
 
                             @Override
@@ -71,6 +72,12 @@ public class MainActivity extends Activity {
                             @Override
                             public void onSuccess() {
                                 clearPeerList();
+                                try {
+                                    if (MainActivity.socket != null)
+                                        MainActivity.socket.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                                 dialog.dismiss();
                             }
                         });
@@ -102,7 +109,7 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void onSuccess() {
-                                MainActivity.this.connectionState = UPLOAD_CONNECTION;
+                                MainActivity.connectionState = UPLOAD_CONNECTION;
                             }
 
                             @Override
@@ -156,7 +163,7 @@ public class MainActivity extends Activity {
         fileDialog.addFileListener(new FileDialog.FileSelectedListener() {
             public void fileSelected(File file) {
                 // start sender / uploader now with the selected file
-                new Uploader(MainActivity.this.uploadSocket, file).start();
+                new Uploader(MainActivity.socket, file).start();
             }
         });
         connectionState = NO_CONNECTION;
@@ -250,16 +257,15 @@ public class MainActivity extends Activity {
         peerList.setAdapter(adapter);
     }
 
-    public boolean isUploader() {
-        return this.connectionState == UPLOAD_CONNECTION;
+    public static boolean isUploader() {
+        return connectionState == UPLOAD_CONNECTION;
     }
 
     private void clearPeerList() {
         populatePeerList(new ArrayList<String>());
     }
 
-    public void setUploadSocket(Socket socket) {
-        this.uploadSocket = socket;
-
+    public static void setSocket(Socket socket) {
+        MainActivity.socket = socket;
     }
 }

@@ -25,12 +25,13 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
             ServerSocket serverSocket = new ServerSocket(8988);
             Log.d(MainActivity.TAG, "Server: Socket opened");
             Socket client = serverSocket.accept();
-            if (mActivity.isUploader()) {
-                mActivity.setUploadSocket(client);
-            } else {
+            MainActivity.setSocket(client);
+
+            if (!MainActivity.isUploader()) {
                 // TODO: instead of saving socket, start downloader / receiver
                 new Downloader(client).start();
             }
+
             Log.d(MainActivity.TAG, "Server: connection done");
         } catch (IOException e) {
             Log.e(MainActivity.TAG, e.getMessage());
@@ -63,6 +64,7 @@ public class FileServerAsyncTask extends AsyncTask<Void, Void, String> {
             while ((len = inputStream.read(buf)) != -1) {
                 out.write(buf, 0, len);
             }
+            Log.i(MainActivity.TAG, "File transfer finished");
             // out.close();
             // inputStream.close();
         } catch (IOException e) {

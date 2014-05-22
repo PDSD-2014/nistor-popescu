@@ -17,7 +17,7 @@ public class ConnectionListener implements ConnectionInfoListener {
 
         if (info.groupFormed && info.isGroupOwner) {
             new FileServerAsyncTask(mActivity).execute();
-        } else if (!mActivity.isUploader()) {
+        } else {
             // start receiver / downloader for client with service
             Intent serviceIntent = new Intent(mActivity, FileTransferService.class);
             serviceIntent.setAction(FileTransferService.ACTION_SEND_FILE);

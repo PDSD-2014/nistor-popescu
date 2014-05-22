@@ -14,6 +14,7 @@ public class FileTransferService extends IntentService {
     public static final String ACTION_SEND_FILE = "ro.cs.pub.pdsd.shareit.SEND_FILE";
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
     public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
+    public static final String EXTRAS_MAIN_ACTIVITY = "go_port";
 
     public FileTransferService(String name) {
         super(name);
@@ -36,24 +37,16 @@ public class FileTransferService extends IntentService {
                 socket.bind(null);
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
 
-                new Downloader(socket).start();
+                MainActivity.setSocket(socket);
+
+                if (MainActivity.isUploader()) {
+                    new Downloader(socket).start();
+                }
 
                 Log.d(MainActivity.TAG, "Client socket - " + socket.isConnected());
             } catch (IOException e) {
                 Log.e(MainActivity.TAG, e.getMessage());
-            } finally {
-                if (socket != null) {
-                    if (socket.isConnected()) {
-                        try {
-                            socket.close();
-                        } catch (IOException e) {
-                            // Give up
-                            e.printStackTrace();
-                        }
-                    }
-                }
             }
-
         }
     }
 }
