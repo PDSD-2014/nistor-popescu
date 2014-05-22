@@ -72,9 +72,9 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void onSuccess() {
+                                clearPeerList();
                                 dialog.dismiss();
                             }
-
                         });
                     }
                 });
@@ -201,7 +201,7 @@ public class MainActivity extends Activity {
 
         switch (id) {
         case R.id.btn_discover:
-            populatePeerList(new ArrayList<String>());
+            clearPeerList();
             if (!isWiqfiP2pEnabled) {
                 Toast.makeText(MainActivity.this, R.string.wifi_disabled, Toast.LENGTH_SHORT)
                         .show();
@@ -275,5 +275,9 @@ public class MainActivity extends Activity {
 
     public boolean isDownloader() {
         return this.connectionState == DOWNLOAD_CONNECTION;
+    }
+
+    private void clearPeerList() {
+        populatePeerList(new ArrayList<String>());
     }
 }
