@@ -72,12 +72,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void onSuccess() {
                                 clearPeerList();
-                                try {
-                                    if (MainActivity.socket != null)
-                                        MainActivity.socket.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                closeSocket();
                                 dialog.dismiss();
                             }
                         });
@@ -85,7 +80,6 @@ public class MainActivity extends Activity {
                 });
 
                 // isDownloader => do not show launch gallery button
-                Log.i(MainActivity.TAG, "conn state " + connectionState);
                 if (connectionState == UPLOAD_CONNECTION) {
                     Button launchGalleryBtn = (Button) dialog.findViewById(R.id.btn_launch_gallery);
                     launchGalleryBtn.setOnClickListener(new OnClickListener() {
@@ -272,5 +266,14 @@ public class MainActivity extends Activity {
 
     public static void setSocket(Socket socket) {
         MainActivity.socket = socket;
+    }
+
+    public void closeSocket(){
+        try {
+            if (MainActivity.socket != null)
+                MainActivity.socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -86,6 +86,7 @@ public class WiFiReceiver extends BroadcastReceiver {
                 Toast.makeText(mActivity, "Device connected", Toast.LENGTH_SHORT).show();
                 mManager.requestConnectionInfo(mChannel, new ConnectionListener(mActivity));
             } else {
+                mActivity.closeSocket();
                 Toast.makeText(mActivity, "Device disconected", Toast.LENGTH_SHORT).show();
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {

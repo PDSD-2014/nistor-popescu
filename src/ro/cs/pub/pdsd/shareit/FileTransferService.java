@@ -39,7 +39,7 @@ public class FileTransferService extends IntentService {
 
                 MainActivity.setSocket(socket);
 
-                if (MainActivity.isUploader()) {
+                if (!MainActivity.isUploader()) {
                     new Downloader(socket).start();
                 }
 
